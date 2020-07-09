@@ -72,23 +72,31 @@ namespace WindowsFormsApp2
 
             db.openConnection();
 
-
-            if (textBoxIdCat.Text.Equals("") || textBoxNameCat.Text.Equals(""))
+            try
             {
+                if (textBoxIdCat.Text.Equals("") || textBoxNameCat.Text.Equals(""))
+                {
 
-                MessageBox.Show("Fill Id and Name of Category", "Empty Category", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Fill Id and Name of Category", "Empty Category", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                else if (command.ExecuteNonQuery() == 1)
+                {
+                    MessageBox.Show("data inserted");
+                }
             }
-            else if (command.ExecuteNonQuery() == 1 )
+            catch (Exception ex)
             {
-                MessageBox.Show("data inserted");
+                MessageBox.Show("Please make sure that the ID is valid", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Console.WriteLine(ex);
             }
             
             
             
-            else {
-                MessageBox.Show("Query not executed");
+            
+            //else {
+            //    MessageBox.Show("Query not executed");
 
-            }
+            //}
         
             db.closeConnection();
 
