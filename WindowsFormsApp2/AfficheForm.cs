@@ -57,19 +57,27 @@ namespace WindowsFormsApp2
 
             command.Parameters.Add("@na", MySqlDbType.VarChar).Value = textBoxName.Text;
             db.openConnection();
-
-            if (command.ExecuteNonQuery() == 1)
+            try
             {
-                MessageBox.Show("demand refused");
+                if (command.ExecuteNonQuery() == 1)
+                {
+                    MessageBox.Show("demand refused");
 
+                }
+
+
+                else
+                {
+                    MessageBox.Show("Query not executed");
+
+                }
             }
-
-
-            else
+            catch (Exception ex)
             {
                 MessageBox.Show("Query not executed");
-
+                Console.WriteLine(ex);
             }
+            
             db.closeConnection();
         }
 

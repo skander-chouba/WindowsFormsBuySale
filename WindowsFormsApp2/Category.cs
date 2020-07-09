@@ -37,6 +37,7 @@ namespace WindowsFormsApp2
             dataGridViewCat.AllowUserToAddRows = false;
            
             dataGridViewCat.DataSource = table;
+            var x = table.Rows[0].ItemArray;
             dataGridViewCat.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
           
             
@@ -108,30 +109,41 @@ namespace WindowsFormsApp2
         {
             DB db = new DB();
             MySqlCommand command = new MySqlCommand("UPDATE `category` SET `name_cat`=@ncat WHERE id_cat=@icat", db.getConnection());
-             
+            MySqlCommand sqlCommand = new MySqlCommand("UPDATE `advert` SET `namecat`=@ncat WHERE namecat=@ncat", db.getConnection());
+
             command.Parameters.Add("@icat", MySqlDbType.VarChar).Value = textBoxIdCat.Text;
             command.Parameters.Add("@ncat", MySqlDbType.VarChar).Value = textBoxNameCat.Text;
+            sqlCommand.Parameters.Add("@ncat", MySqlDbType.VarChar).Value = textBoxNameCat.Text;
+            sqlCommand.Parameters.Add("@catName", MySqlDbType.VarChar).Value = textBoxNameCat.Text;
 
             db.openConnection();
-
-            if (textBoxIdCat.Text.Equals("") || textBoxNameCat.Text.Equals(""))
+            try
             {
+                if (textBoxIdCat.Text.Equals("") || textBoxNameCat.Text.Equals(""))
+                {
 
-                MessageBox.Show("Select Id and Name of Category", "Empty Category", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Select Id and Name of Category", "Empty Category", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+
+                else if (command.ExecuteNonQuery() >= 0 && sqlCommand.ExecuteNonQuery() >= 0)
+                {
+                    MessageBox.Show("data Updated");
+
+                }
+
+
+                else
+                {
+                    MessageBox.Show("Query not executed");
+
+                }
             }
-
-            else if (command.ExecuteNonQuery() == 1)
-            {
-                MessageBox.Show("data Updated");
-               
-            }
-
-            
-            else
+            catch (Exception ex)
             {
                 MessageBox.Show("Query not executed");
-
+                Console.WriteLine(ex);
             }
+            
             db.closeConnection();
             FillDGV("");
 
@@ -141,8 +153,10 @@ namespace WindowsFormsApp2
         {
             DB db = new DB();
             MySqlCommand command = new MySqlCommand("DELETE FROM `category` WHERE id_cat=@icat  ", db.getConnection());
+            MySqlCommand sqlCommand = new MySqlCommand("DELETE FROM `advert` WHERE namecat=@catName  ", db.getConnection());
 
             command.Parameters.Add("@icat", MySqlDbType.VarChar).Value = textBoxIdCat.Text;
+            sqlCommand.Parameters.Add("@catName", MySqlDbType.VarChar).Value = textBoxNameCat.Text;
             db.openConnection();
 
             if (textBoxIdCat.Text.Equals("") || textBoxNameCat.Text.Equals(""))
@@ -150,7 +164,7 @@ namespace WindowsFormsApp2
 
                 MessageBox.Show("Select Id and Name of Category", "Empty Category", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            else if (command.ExecuteNonQuery() == 1)
+            else if (command.ExecuteNonQuery() == 1 && sqlCommand.ExecuteNonQuery() >= 0)
             {
                 MessageBox.Show("data was deleted");
 
